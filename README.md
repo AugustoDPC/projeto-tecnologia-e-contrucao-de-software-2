@@ -58,6 +58,17 @@ Swagger é esse:
 https://SEU-CODESPACE-3000.app.github.dev/api
 ```
 
+caminhos:
+Porta 8080 → Adminer
+É onde você visualiza o banco e as tabelas.
+Porta 5433 → PostgreSQL
+Essa é a porta do banco, mas não abrir no navegador.
+Porta 3000 → backend NestJS / Swagger(abrir com o /api final): 
+https://SEU-CODESPACE-3000.app.github.dev/api
+
+
+
+
 Adminer:
 
 ```
