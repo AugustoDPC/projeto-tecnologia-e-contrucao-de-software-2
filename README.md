@@ -1,14 +1,30 @@
 # projeto-tecnologia-e-contrucao-de-software-2
 
 Codespace novo:
+```
 cd backend
+```
+```
 cp .env.example .env 
+```
+```
 npm install 
+```
+```
 docker compose up -d 
+```
+```
 npx prisma generate 
+```
+```
 npx prisma migrate deploy 
+```
+```
 docker run --name cursos-adminer --network cursos\_default -p 8080:8080 -d adminer 
+```
+```
 npm run start\:dev    
+```
 Só um detalhe: se no Codespace novo o container `cursos-adminer` já existir, o comando `docker run --name cursos-adminer ...` vai reclamar que o nome já existe. Nesse caso, use:
 
 ```
@@ -16,12 +32,24 @@ docker start cursos-adminer
 ```
 
 codespace ja criado:
+```
 cd backend
+```
+```
 docker compose up -d
+```
+```
 docker start cursos-adminer
+```
+```
 npx prisma generate
+```
+```
 npx prisma migrate deploy
+```
+```
 npm run start\:dev
+```
 
 
 Swagger é esse:
