@@ -1,5 +1,3 @@
-
-
 generator client {
   provider     = "prisma-client"
   output       = "../src/generated/prisma"
@@ -7,25 +5,26 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
-
 // ------------------------------------------------------------
 // Core
 // ------------------------------------------------------------
 
 model Usuario {
-  idUsuario         Int             @id @default(autoincrement()) @map("ID_Usuario")
-  nomeCompleto      String          @map("NomeCompleto")
-  email             String          @unique @map("Email")
-  senha             String          @map("SenhaHash")
-  dataCadastro      DateTime        @default(now()) @map("DataCadastro") @db.Date
-  cursosMinistrados Curso[]         @relation("InstrutorCursos")
+  idUsuario      Int      @id @default(autoincrement()) @map("ID_Usuario")
+  nomeCompleto   String   @map("NomeCompleto")
+  email          String   @unique @map("Email")
+  senha          String   @map("SenhaHash")
+  dataCadastro   DateTime @default(now()) @map("DataCadastro")
+
+  cursosMinistrados Curso[]        @relation("InstrutorCursos")
   matriculas        Matricula[]
   progressoAulas    ProgressoAula[]
-  avaliacoes        Avaliacao[]
-  certificados      Certificado[]
-  assinaturas       Assinatura[]
+  avaliacoes       Avaliacao[]
+  certificados     Certificado[]
+  assinaturas      Assinatura[]
 
   @@map("Usuarios")
 }
@@ -34,8 +33,9 @@ model Categoria {
   idCategoria Int      @id @default(autoincrement()) @map("ID_Categoria")
   nome        String   @unique @map("Nome")
   descricao   String?  @map("Descricao")
-  cursos      Curso[]
-  trilhas     Trilha[]
+
+  cursos  Curso[]
+  trilhas Trilha[]
 
   @@map("Categorias")
 }
@@ -51,12 +51,13 @@ model Curso {
   idInstrutor    Int       @map("ID_Instrutor")
   idCategoria    Int       @map("ID_Categoria")
   nivel          String?   @map("Nivel")
-  dataPublicacao DateTime? @map("DataPublicacao") @db.Date
+  dataPublicacao DateTime? @map("DataPublicacao")
   totalAulas     Int?      @map("TotalAulas")
   totalHoras     Int?      @map("TotalHoras")
 
-  instrutor     Usuario       @relation("InstrutorCursos", fields: [idInstrutor], references: [idUsuario])
-  categoria     Categoria     @relation(fields: [idCategoria], references: [idCategoria])
+  instrutor Usuario   @relation("InstrutorCursos", fields: [idInstrutor], references: [idUsuario])
+  categoria Categoria @relation(fields: [idCategoria], references: [idCategoria])
+
   modulos       Modulo[]
   matriculas    Matricula[]
   avaliacoes    Avaliacao[]
@@ -72,7 +73,7 @@ model Modulo {
   titulo   String @map("Titulo")
   ordem    Int    @map("Ordem")
 
-  curso Curso  @relation(fields: [idCurso], references: [idCurso])
+  curso Curso @relation(fields: [idCurso], references: [idCurso])
   aulas Aula[]
 
   @@map("Modulos")
@@ -82,7 +83,7 @@ model Aula {
   idAula         Int     @id @default(autoincrement()) @map("ID_Aula")
   idModulo       Int     @map("ID_Modulo")
   titulo         String  @map("Titulo")
-  tipoConteudo   String  @map("TipoConteudo") // Ex: Video, Texto, Quiz
+  tipoConteudo   String  @map("TipoConteudo")
   urlConteudo    String? @map("URL_Conteudo")
   duracaoMinutos Int?    @map("DuracaoMinutos")
   ordem          Int     @map("Ordem")
@@ -101,8 +102,8 @@ model Matricula {
   idMatricula   Int       @id @default(autoincrement()) @map("ID_Matricula")
   idUsuario     Int       @map("ID_Usuario")
   idCurso       Int       @map("ID_Curso")
-  dataMatricula DateTime  @default(now()) @map("DataMatricula") @db.Date
-  dataConclusao DateTime? @map("DataConclusao") @db.Date
+  dataMatricula DateTime  @default(now()) @map("DataMatricula")
+  dataConclusao DateTime? @map("DataConclusao")
 
   usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
   curso   Curso   @relation(fields: [idCurso], references: [idCurso])
@@ -113,13 +114,14 @@ model Matricula {
 model ProgressoAula {
   idUsuario     Int      @map("ID_Usuario")
   idAula        Int      @map("ID_Aula")
-  dataConclusao DateTime @map("DataConclusao") @db.Date
-  status        String   @map("Status") // Ex: Concluido
+  dataConclusao DateTime @map("DataConclusao")
+  status        String   @map("Status")
 
   usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
   aula    Aula    @relation(fields: [idAula], references: [idAula])
 
   @@id([idUsuario, idAula])
+
   @@map("Progresso_Aulas")
 }
 
@@ -127,9 +129,9 @@ model Avaliacao {
   idAvaliacao   Int      @id @default(autoincrement()) @map("ID_Avaliacao")
   idUsuario     Int      @map("ID_Usuario")
   idCurso       Int      @map("ID_Curso")
-  nota          Int      @map("Nota") // 1 a 5
+  nota          Int      @map("Nota")
   comentario    String?  @map("Comentario")
-  dataAvaliacao DateTime @default(now()) @map("DataAvaliacao") @db.Date
+  dataAvaliacao DateTime @default(now()) @map("DataAvaliacao")
 
   usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
   curso   Curso   @relation(fields: [idCurso], references: [idCurso])
@@ -147,7 +149,8 @@ model Trilha {
   descricao   String? @map("Descricao")
   idCategoria Int     @map("ID_Categoria")
 
-  categoria     Categoria     @relation(fields: [idCategoria], references: [idCategoria])
+  categoria Categoria @relation(fields: [idCategoria], references: [idCategoria])
+
   trilhasCursos TrilhaCurso[]
   certificados  Certificado[]
 
@@ -163,6 +166,7 @@ model TrilhaCurso {
   curso  Curso  @relation(fields: [idCurso], references: [idCurso])
 
   @@id([idTrilha, idCurso])
+
   @@map("Trilhas_Cursos")
 }
 
@@ -172,11 +176,11 @@ model Certificado {
   idCurso           Int      @map("ID_Curso")
   idTrilha          Int?     @map("ID_Trilha")
   codigoVerificacao String   @unique @map("CodigoVerificacao")
-  dataEmissao       DateTime @default(now()) @map("DataEmissao") @db.Date
+  dataEmissao       DateTime @default(now()) @map("DataEmissao")
 
-  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
-  curso   Curso   @relation(fields: [idCurso], references: [idCurso])
-  trilha  Trilha? @relation(fields: [idTrilha], references: [idTrilha])
+  usuario Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+  curso   Curso    @relation(fields: [idCurso], references: [idCurso])
+  trilha  Trilha?  @relation(fields: [idTrilha], references: [idTrilha])
 
   @@map("Certificados")
 }
@@ -186,12 +190,13 @@ model Certificado {
 // ------------------------------------------------------------
 
 model Plano {
-  idPlano      Int          @id @default(autoincrement()) @map("ID_Plano")
-  nome         String       @map("Nome")
-  descricao    String?      @map("Descricao")
-  preco        Decimal      @map("Preco")
-  duracaoMeses Int          @map("DuracaoMeses")
-  assinaturas  Assinatura[]
+  idPlano      Int    @id @default(autoincrement()) @map("ID_Plano")
+  nome         String @map("Nome")
+  descricao    String? @map("Descricao")
+  preco        Float  @map("Preco")
+  duracaoMeses Int    @map("DuracaoMeses")
+
+  assinaturas Assinatura[]
 
   @@map("Planos")
 }
@@ -200,11 +205,12 @@ model Assinatura {
   idAssinatura Int      @id @default(autoincrement()) @map("ID_Assinatura")
   idUsuario    Int      @map("ID_Usuario")
   idPlano      Int      @map("ID_Plano")
-  dataInicio   DateTime @map("DataInicio") @db.Date
-  dataFim      DateTime @map("DataFim") @db.Date
+  dataInicio   DateTime @map("DataInicio")
+  dataFim      DateTime @map("DataFim")
 
-  usuario    Usuario     @relation(fields: [idUsuario], references: [idUsuario])
-  plano      Plano       @relation(fields: [idPlano], references: [idPlano])
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  plano   Plano   @relation(fields: [idPlano], references: [idPlano])
+
   pagamentos Pagamento[]
 
   @@map("Assinaturas")
@@ -213,8 +219,8 @@ model Assinatura {
 model Pagamento {
   idPagamento        Int      @id @default(autoincrement()) @map("ID_Pagamento")
   idAssinatura       Int      @map("ID_Assinatura")
-  valorPago          Decimal  @map("ValorPago") // valor efetivo pago (não é FK, apesar do enunciado)
-  dataPagamento      DateTime @default(now()) @map("DataPagamento") @db.Date
+  valorPago          Float    @map("ValorPago")
+  dataPagamento      DateTime @default(now()) @map("DataPagamento")
   metodoPagamento    String   @map("MetodoPagamento")
   idTransacaoGateway String   @map("Id_Transacao_Gateway")
 
