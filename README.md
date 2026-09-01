@@ -1,6 +1,5 @@
 # projeto-tecnologia-e-contrucao-de-software-2
 
-```bash
 ```
 cd backend
 ```
@@ -19,6 +18,18 @@ npx prisma migrate deploy
 ```
 npm run start:dev
 ```
+
+```
+Terminal do backend:
+
+cd backend
+npm run start:dev
+
+Terminal do Prisma Studio:
+
+cd backend
+npx prisma studio
+````
 
 
 Swagger é esse:
