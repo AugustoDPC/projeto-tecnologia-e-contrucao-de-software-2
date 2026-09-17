@@ -9,7 +9,14 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
- z
+  @Post()
+  @ApiOperation({ summary: 'Criar um novo usuário' })
+  @ApiResponse({ status: 201, description: 'Usuário criado com sucesso.' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos.' })
+  create(@Body() createUsuarioDto: CreateUsuarioDto) {
+    return this.usuariosService.create(createUsuarioDto);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Listar todos os usuários' })
   findAll() {
