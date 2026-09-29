@@ -16,6 +16,7 @@ import { CertificadosModule } from './certificados/certificados.module';
 import { PlanosModule } from './planos/planos.module';
 import { AssinaturasModule } from './assinaturas/assinaturas.module';
 import { PagamentosModule } from './pagamentos/pagamentos.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PagamentosModule } from './pagamentos/pagamentos.module';
     PlanosModule,
     AssinaturasModule,
     PagamentosModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

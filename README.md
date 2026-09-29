@@ -32,6 +32,19 @@ npx prisma studio
 ````
 
 
+Se você já tinha um `.env` antigo, adicione nele a linha abaixo (sem ela o backend não inicia):
+
+```
+JWT_SECRET="troque-por-uma-chave-longa-e-aleatoria"
+```
+
+Autenticação JWT (testar pelo Swagger):
+
+1. `POST /usuarios` → cadastra o usuário (rota pública, a senha é salva criptografada)
+2. `POST /auth/login` → envia `email` e `senha` e copia o `access_token`
+3. Clica no botão verde **Authorize**, cola o token e confirma
+4. Agora `GET/PATCH/DELETE /usuarios` funcionam (sem token retornam 401)
+
 Swagger é esse:
 
 ```
