@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -7,8 +8,15 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 export class UsuariosService {
   constructor(private prisma: PrismaService) {}
 
-  create(createUsuarioDto: CreateUsuarioDto) {
-    return this.prisma.usuario.create({ data: createUsuarioDto });
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    const senhaHash = await bcrypt.hash(createUsuarioDto.senha, 10);
+
+    return this.prisma.usuario.create({
+      data: {
+        ...createUsuarioDto,
+        senha: senhaHash,
+      },
+    });
   }
 
   findAll() {
@@ -19,10 +27,20 @@ export class UsuariosService {
     return this.prisma.usuario.findUnique({ where: { idUsuario: id } });
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+  findByEmail(email: string) {
+    return this.prisma.usuario.findUnique({ where: { email } });
+  }
+
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+    const dados = { ...updateUsuarioDto };
+
+    if (dados.senha) {
+      dados.senha = await bcrypt.hash(dados.senha, 10);
+    }
+
     return this.prisma.usuario.update({
       where: { idUsuario: id },
-      data: updateUsuarioDto,
+      data: dados,
     });
   }
 
