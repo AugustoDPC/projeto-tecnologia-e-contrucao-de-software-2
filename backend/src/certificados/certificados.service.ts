@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCertificadoDto } from './dto/create-certificado.dto';
@@ -8,7 +9,10 @@ export class CertificadosService {
   constructor(private prisma: PrismaService) {}
 
   create(createCertificadoDto: CreateCertificadoDto) {
-    return this.prisma.certificado.create({ data: createCertificadoDto });
+    const codigo = randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
+    return this.prisma.certificado.create({
+      data: { ...createCertificadoDto, codigoVerificacao: `CERT-${codigo}` },
+    });
   }
 
   findAll() {

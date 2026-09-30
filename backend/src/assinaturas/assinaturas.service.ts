@@ -3,6 +3,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAssinaturaDto } from './dto/create-assinatura.dto';
 import { UpdateAssinaturaDto } from './dto/update-assinatura.dto';
 
+const incluir = {
+  plano: true,
+  usuario: { select: { nomeCompleto: true } },
+};
+
 @Injectable()
 export class AssinaturasService {
   constructor(private prisma: PrismaService) {}
@@ -12,11 +17,15 @@ export class AssinaturasService {
   }
 
   findAll() {
-    return this.prisma.assinatura.findMany();
+    // Inclui o plano para o frontend preencher o valor do pagamento.
+    return this.prisma.assinatura.findMany({ include: incluir });
   }
 
   findOne(id: number) {
-    return this.prisma.assinatura.findUnique({ where: { idAssinatura: id } });
+    return this.prisma.assinatura.findUnique({
+      where: { idAssinatura: id },
+      include: incluir,
+    });
   }
 
   update(id: number, updateAssinaturaDto: UpdateAssinaturaDto) {

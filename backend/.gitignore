@@ -36,3 +36,7 @@ yarn-error.log*
 # Prisma client gerado (recriado com "npx prisma generate")
 /generated/prisma
 /src/generated/prisma
+
+# Banco SQLite local
+/prisma/*.db
+/prisma/*.db-journal

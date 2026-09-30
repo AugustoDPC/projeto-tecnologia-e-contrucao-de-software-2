@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePagamentoDto } from './dto/create-pagamento.dto';
@@ -8,7 +9,9 @@ export class PagamentosService {
   constructor(private prisma: PrismaService) {}
 
   create(createPagamentoDto: CreatePagamentoDto) {
-    return this.prisma.pagamento.create({ data: createPagamentoDto });
+    return this.prisma.pagamento.create({
+      data: { ...createPagamentoDto, idTransacaoGateway: `TX-${randomUUID()}` },
+    });
   }
 
   findAll() {

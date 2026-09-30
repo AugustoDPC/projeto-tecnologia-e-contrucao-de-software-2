@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsDateString, IsIn, IsInt, IsNumber, IsOptional, Min } from 'class-validator';
+
+export const METODOS_PAGAMENTO = ['Pix', 'Cartão de crédito', 'Cartão de débito'];
 
 export class CreatePagamentoDto {
   @ApiProperty({ example: 1, description: 'ID da assinatura' })
@@ -16,13 +18,9 @@ export class CreatePagamentoDto {
   @IsDateString()
   dataPagamento?: string;
 
-  @ApiProperty({ example: 'PIX' })
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: 'Pix', enum: METODOS_PAGAMENTO })
+  @IsIn(METODOS_PAGAMENTO)
   metodoPagamento: string;
 
-  @ApiProperty({ example: 'TX-123456' })
-  @IsString()
-  @IsNotEmpty()
-  idTransacaoGateway: string;
+  // O ID da transação é gerado pelo servidor (ver PagamentosService).
 }

@@ -31,6 +31,25 @@ cd backend
 npx prisma studio
 ````
 
+## Frontend (React + Vite)
+
+Com o backend rodando, em outro terminal:
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Abra http://localhost:5173 (no Codespaces, a porta 5173). O Vite repassa as
+chamadas de `/backend` para o NestJS na porta 3000, então não é preciso
+expor a porta do backend para o navegador.
+
+Telas: login, cadastro de conta e uma tela de listar / criar / editar /
+excluir para cada tabela. As tabelas ficam descritas em
+`frontend/src/resources.ts` — ao criar uma tabela nova no backend, basta
+adicionar uma entrada nesse arquivo.
+
 
 Swagger é esse:
 

@@ -7,6 +7,9 @@ import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Libera o acesso do frontend, que roda em outra porta.
+  app.enableCors({ origin: process.env.CORS_ORIGIN ?? true });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

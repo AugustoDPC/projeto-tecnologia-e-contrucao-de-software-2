@@ -28,7 +28,11 @@ export class UsuariosService {
   }
 
   findByEmail(email: string) {
-    return this.prisma.usuario.findUnique({ where: { email } });
+    // O login precisa do hash para comparar a senha.
+    return this.prisma.usuario.findUnique({
+      where: { email },
+      omit: { senha: false },
+    });
   }
 
   async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
