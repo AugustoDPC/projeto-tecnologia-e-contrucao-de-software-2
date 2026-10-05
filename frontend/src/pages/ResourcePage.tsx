@@ -14,9 +14,10 @@ import {
 
 type Opcao = { valor: string; texto: string };
 
-export default function ResourcePage() {
+// "lista" = quais tabelas esta tela pode abrir (o admin vê todas; o professor, as dele).
+export default function ResourcePage({ lista = recursos }: { lista?: Recurso[] }) {
   const { slug } = useParams();
-  const recurso = acharRecurso(slug);
+  const recurso = acharRecurso(slug, lista);
 
   if (!recurso) return <p className="erro">Página não encontrada.</p>;
   // A key reinicia o estado ao trocar de tabela no menu.

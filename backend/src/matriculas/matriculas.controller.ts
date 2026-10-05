@@ -1,42 +1,45 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Logado, type UsuarioLogado } from '../auth/usuario-logado';
 import { MatriculasService } from './matriculas.service';
 import { CreateMatriculaDto } from './dto/create-matricula.dto';
 import { UpdateMatriculaDto } from './dto/update-matricula.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+// Qualquer usuário logado. Regra de dono no service: o aluno só mexe nas matrículas dele.
 @ApiTags('matriculas')
+@ApiBearerAuth('JWT-auth')
 @Controller('matriculas')
 export class MatriculasController {
   constructor(private readonly matriculasService: MatriculasService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cadastrar matricula' })
+  @ApiOperation({ summary: 'Matricular (o aluno só a si mesmo)' })
   @ApiResponse({ status: 201, description: 'Registro criado com sucesso.' })
-  create(@Body() createMatriculaDto: CreateMatriculaDto) {
-    return this.matriculasService.create(createMatriculaDto);
+  create(@Body() createMatriculaDto: CreateMatriculaDto, @Logado() logado: UsuarioLogado) {
+    return this.matriculasService.create(createMatriculaDto, logado);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar matriculas' })
-  findAll() {
-    return this.matriculasService.findAll();
+  @ApiOperation({ summary: 'Listar matrículas (o aluno vê só as dele)' })
+  findAll(@Logado() logado: UsuarioLogado) {
+    return this.matriculasService.findAll(logado);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Buscar matricula pelo ID' })
-  findOne(@Param('id') id: string) {
-    return this.matriculasService.findOne(+id);
+  @ApiOperation({ summary: 'Buscar matrícula pelo ID' })
+  findOne(@Param('id') id: string, @Logado() logado: UsuarioLogado) {
+    return this.matriculasService.findOne(+id, logado);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar matricula' })
-  update(@Param('id') id: string, @Body() updateMatriculaDto: UpdateMatriculaDto) {
-    return this.matriculasService.update(+id, updateMatriculaDto);
+  @ApiOperation({ summary: 'Atualizar matrícula' })
+  update(@Param('id') id: string, @Body() updateMatriculaDto: UpdateMatriculaDto, @Logado() logado: UsuarioLogado) {
+    return this.matriculasService.update(+id, updateMatriculaDto, logado);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remover matricula' })
-  remove(@Param('id') id: string) {
-    return this.matriculasService.remove(+id);
+  @ApiOperation({ summary: 'Cancelar matrícula' })
+  remove(@Param('id') id: string, @Logado() logado: UsuarioLogado) {
+    return this.matriculasService.remove(+id, logado);
   }
 }

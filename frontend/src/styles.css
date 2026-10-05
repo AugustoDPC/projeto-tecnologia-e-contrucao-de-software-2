@@ -368,3 +368,411 @@ td.acoes button {
     padding: 1rem;
   }
 }
+
+/* ---------- Área do aluno e do professor ---------- */
+
+h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.info {
+  color: var(--suave);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.aviso {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+}
+
+.sucesso {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.voltar {
+  display: inline-block;
+  margin-bottom: 0.8rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.espaco {
+  margin-top: 2rem;
+}
+
+.bloco {
+  margin-bottom: 1rem;
+}
+
+.destaque {
+  border-color: var(--primaria);
+}
+
+.cards-cursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.card-curso {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+
+a.card-curso:hover {
+  border-color: var(--primaria);
+}
+
+.descricao {
+  margin: 0;
+  font-size: 0.92rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.preco {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.selo {
+  font-size: 1.8rem;
+}
+
+.etiquetas {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.etiqueta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--primaria);
+}
+
+.etiqueta.ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.estrelas {
+  color: #d97706;
+}
+
+label.em-linha {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Barra de progresso */
+.progresso {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.barra {
+  flex: 1;
+  height: 8px;
+  background: var(--borda);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra div {
+  height: 100%;
+  background: #22c55e;
+}
+
+/* Lista de aulas de um módulo */
+.aulas {
+  list-style: none;
+  padding: 0;
+  margin: 0.8rem 0 0;
+}
+
+.aulas li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--borda);
+}
+
+.aulas .check {
+  width: 1.2rem;
+  color: var(--suave);
+  font-weight: 700;
+}
+
+.aulas li.concluida .check {
+  color: #16a34a;
+}
+
+.titulo-aula {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo-aula small {
+  color: var(--suave);
+}
+
+.aulas button {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+/* Barra do topo (aluno e professor): mesmas cores do menu lateral do admin */
+.plataforma {
+  min-height: 100vh;
+}
+
+.topo {
+  background: var(--lateral);
+  color: #e0e7ff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topo-conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.marca {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.topo-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.topo-menu a,
+.menu summary {
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  color: #e0e7ff;
+  cursor: pointer;
+}
+
+.topo-menu > a {
+  display: inline-block;
+}
+
+.menu {
+  position: relative;
+}
+
+.menu summary {
+  list-style: none;
+}
+
+.menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu summary::after {
+  content: ' ▾';
+  font-size: 0.75rem;
+}
+
+.menu summary:hover,
+.menu[open] summary {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Lista que abre embaixo do item do menu */
+.menu-itens {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  min-width: 200px;
+  background: var(--lateral);
+  border-radius: 8px;
+  padding: 0.4rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.topo-usuario {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.topo-usuario span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.topo-usuario small {
+  color: #a5b4fc;
+}
+
+.topo-usuario button {
+  color: #e0e7ff;
+  border-color: rgba(255, 255, 255, 0.25);
+  padding: 0.35rem 0.8rem;
+}
+
+.topo-usuario button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--primaria);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Cards de números do painel */
+.estatisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.estatistica {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.1rem 1.3rem;
+}
+
+.estatistica strong {
+  font-size: 1.6rem;
+}
+
+.estatistica span {
+  color: var(--suave);
+  font-size: 0.85rem;
+}
+
+.filtros {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+
+.filtros input {
+  flex: 1;
+  max-width: 360px;
+}
+
+/* Link com cara de botão */
+.botao-link {
+  display: inline-block;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  background: var(--primaria);
+  color: #fff;
+  text-decoration: none;
+}
+
+.botao-link:hover {
+  background: var(--primaria-hover);
+}
+
+/* Cursos de uma trilha, em ordem */
+.etapas {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.etapas li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.3rem;
+}
+
+.etapas li > div {
+  flex: 1;
+}
+
+.etapas .numero {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: var(--primaria);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+/* Certificado (tela e impressão) */
+.certificado {
+  text-align: center;
+  padding: 3rem 2rem;
+  border: 3px double var(--primaria);
+}
+
+.certificado h1 {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}
+
+@media print {
+  .topo,
+  .nao-imprimir {
+    display: none;
+  }
+
+  main {
+    padding: 0;
+  }
+}

@@ -1,12 +1,15 @@
 import { Link, NavLink, Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './auth';
+import { inicioDoPerfil, useAuth } from './auth';
 import { grupos, recursos } from './resources';
 
-// Estrutura das páginas logadas: menu lateral + conteúdo.
+// Estrutura do painel do admin: menu lateral + conteúdo.
 export default function Layout() {
-  const { token, email, logout } = useAuth();
+  const { token, email, perfil, logout } = useAuth();
 
   if (!token) return <Navigate to="/login" replace />;
+
+  // Professor e aluno têm áreas próprias.
+  if (perfil !== 'ADMIN') return <Navigate to={inicioDoPerfil(perfil)} replace />;
 
   return (
     <div className="app">
@@ -29,7 +32,7 @@ export default function Layout() {
           ))}
         </nav>
         <div className="usuario">
-          <span title={email ?? ''}>{email}</span>
+          <span title={email ?? ''}>{email} (admin)</span>
           <button className="secundario" onClick={logout}>
             Sair
           </button>

@@ -19,7 +19,8 @@ export default function Cadastro() {
     setErro('');
     setEnviando(true);
     try {
-      await api('/usuarios', 'POST', { nomeCompleto, email, senha });
+      // Cadastro público: o backend sempre cria a conta como aluno.
+      await api('/auth/cadastrar', 'POST', { nomeCompleto, email, senha });
       // Já entra direto depois de criar a conta.
       await login(email, senha);
       navigate('/');

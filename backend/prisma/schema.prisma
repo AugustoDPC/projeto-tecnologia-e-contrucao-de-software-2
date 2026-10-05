@@ -12,12 +12,23 @@ datasource db {
 // Core
 // ------------------------------------------------------------
 
+// Tipo de conta: o que cada pessoa pode fazer na plataforma.
+//   USER      = aluno: catálogo, matrícula, progresso, avaliação e a própria assinatura
+//   INSTRUTOR = professor: mantém os PRÓPRIOS cursos e acompanha os alunos (sem financeiro)
+//   ADMIN     = administrador: tudo, inclusive usuários, planos e pagamentos
+enum Perfil {
+  USER
+  INSTRUTOR
+  ADMIN
+}
+
 model Usuario {
   idUsuario      Int      @id @default(autoincrement()) @map("ID_Usuario")
   nomeCompleto   String   @map("NomeCompleto")
   email          String   @unique @map("Email")
   senha          String   @map("SenhaHash")
   dataCadastro   DateTime @default(now()) @map("DataCadastro")
+  perfil         Perfil   @default(USER) @map("Perfil")
 
   cursosMinistrados Curso[]        @relation("InstrutorCursos")
   matriculas        Matricula[]

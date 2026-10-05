@@ -1,14 +1,19 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Perfil } from '../generated/prisma/enums';
+import { Perfis } from '../auth/perfis.decorator';
 import { CategoriasService } from './categorias.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('categorias')
+@ApiBearerAuth('JWT-auth')
+// Ler: qualquer usuário logado. Criar, editar e excluir: professor ou admin.
 @Controller('categorias')
 export class CategoriasController {
   constructor(private readonly categoriasService: CategoriasService) {}
 
+  @Perfis(Perfil.ADMIN, Perfil.INSTRUTOR)
   @Post()
   @ApiOperation({ summary: 'Cadastrar uma nova categoria' })
   @ApiResponse({ status: 201, description: 'Categoria criada com sucesso.' })
@@ -29,12 +34,14 @@ export class CategoriasController {
     return this.categoriasService.findOne(+id);
   }
 
+  @Perfis(Perfil.ADMIN, Perfil.INSTRUTOR)
   @Patch(':id')
   @ApiOperation({ summary: 'Atualizar uma categoria' })
   update(@Param('id') id: string, @Body() updateCategoriaDto: UpdateCategoriaDto) {
     return this.categoriasService.update(+id, updateCategoriaDto);
   }
 
+  @Perfis(Perfil.ADMIN, Perfil.INSTRUTOR)
   @Delete(':id')
   @ApiOperation({ summary: 'Remover uma categoria' })
   remove(@Param('id') id: string) {

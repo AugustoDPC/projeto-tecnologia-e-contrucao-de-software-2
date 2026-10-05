@@ -1,28 +1,52 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { api, TOKEN_KEY } from './api';
 
+// "USER" (aluno), "INSTRUTOR" (professor) ou "ADMIN"
+export type Perfil = 'USER' | 'INSTRUTOR' | 'ADMIN';
+
 type Auth = {
   token: string | null;
+  idUsuario: number | null;
   email: string | null;
+  perfil: Perfil | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
 const AuthContext = createContext<Auth | null>(null);
 
-// Lê o e-mail de dentro do JWT (payload { sub, email }).
-function emailDoToken(token: string | null): string | null {
+type DadosToken = { sub: number; email: string; perfil: Perfil };
+
+// Lê o payload de dentro do JWT ({ sub, email, perfil }).
+// Qualquer um consegue LER o payload; só o backend (com o JWT_SECRET) consegue CRIAR um token válido.
+function dadosDoToken(token: string | null): DadosToken | null {
   if (!token) return null;
   try {
-    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    return payload.email ?? null;
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
   } catch {
     return null;
   }
 }
 
+// Token antigo (sem perfil) não serve mais: obriga a entrar de novo.
+function tokenSalvo() {
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token && !dadosDoToken(token)?.perfil) {
+    localStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
+  return token;
+}
+
+// Página inicial de cada tipo de conta.
+export function inicioDoPerfil(perfil: Perfil | null) {
+  if (perfil === 'ADMIN') return '/';
+  if (perfil === 'INSTRUTOR') return '/professor';
+  return '/aluno';
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
+  const [token, setToken] = useState<string | null>(tokenSalvo);
 
   useEffect(() => {
     const aoSair = () => setToken(null);
@@ -32,6 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const { access_token } = await api<{ access_token: string }>('/auth/login', 'POST', { email, password });
+    console.log('[login] token recebido:', access_token);
+    console.log('[login] dados dentro do token:', dadosDoToken(access_token));
     localStorage.setItem(TOKEN_KEY, access_token);
     setToken(access_token);
   }
@@ -41,8 +67,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
   }
 
+  const dados = dadosDoToken(token);
+
   return (
-    <AuthContext.Provider value={{ token, email: emailDoToken(token), login, logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        token,
+        idUsuario: dados?.sub ?? null,
+        email: dados?.email ?? null,
+        perfil: dados?.perfil ?? null,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }
 

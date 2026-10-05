@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Perfil } from '../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -11,16 +12,24 @@ export class UsuariosService {
   async create(createUsuarioDto: CreateUsuarioDto) {
     const senhaHash = await bcrypt.hash(createUsuarioDto.senha, 10);
 
-    return this.prisma.usuario.create({
+    const usuario = await this.prisma.usuario.create({
       data: {
         ...createUsuarioDto,
         senha: senhaHash,
       },
     });
+    console.log('[usuarios] usuário criado:', usuario);
+    return usuario;
   }
 
-  findAll() {
-    return this.prisma.usuario.findMany();
+  // perfil inválido ou vazio = sem filtro
+  findAll(perfil?: string) {
+    const valido = Object.values(Perfil).includes(perfil as Perfil);
+
+    return this.prisma.usuario.findMany({
+      where: valido ? { perfil: perfil as Perfil } : undefined,
+      orderBy: { nomeCompleto: 'asc' },
+    });
   }
 
   findOne(id: number) {

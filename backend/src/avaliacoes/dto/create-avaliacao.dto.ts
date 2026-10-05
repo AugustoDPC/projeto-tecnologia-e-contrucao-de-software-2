@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class CreateAvaliacaoDto {
   @ApiProperty({ example: 1, description: 'ID do usuário' })
@@ -10,8 +10,10 @@ export class CreateAvaliacaoDto {
   @IsInt()
   idCurso: number;
 
-  @ApiProperty({ example: 5, description: 'Nota da avaliação' })
+  @ApiProperty({ example: 5, description: 'Nota de 1 a 5' })
   @IsInt()
+  @Min(1)
+  @Max(5)
   nota: number;
 
   @ApiPropertyOptional({ example: 'Ótimo curso!' })

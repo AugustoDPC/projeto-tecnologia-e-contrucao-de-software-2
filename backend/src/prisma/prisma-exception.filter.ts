@@ -5,8 +5,9 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { Prisma } from '../generated/prisma/client';
+import { rotulo } from '../comum/rotulos';
 
 /**
  * Traduz os erros conhecidos do Prisma em respostas HTTP legíveis.
@@ -22,7 +23,11 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       // Violação de UNIQUE: já existe um registro com esse valor.
       case 'P2002': {
-        const campos = this.camposDuplicados(exception);
+        const campos = this.camposDuplicados(exception)
+          .split(', ')
+          .filter(Boolean)
+          .map(rotulo)
+          .join(', ');
         return response.status(HttpStatus.CONFLICT).json({
           statusCode: HttpStatus.CONFLICT,
           error: 'Conflict',
@@ -42,13 +47,22 @@ export class PrismaExceptionFilter implements ExceptionFilter {
 
       // Chave estrangeira apontando para um registro que não existe.
       case 'P2003': {
+        // No DELETE, o problema é o contrário: outros registros dependem deste.
+        if (host.switchToHttp().getRequest<Request>().method === 'DELETE') {
+          return response.status(HttpStatus.CONFLICT).json({
+            statusCode: HttpStatus.CONFLICT,
+            error: 'Conflict',
+            message: 'Não é possível excluir: existem outros registros ligados a este. Exclua-os primeiro.',
+          });
+        }
         const campo = this.campoDaChaveEstrangeira(exception);
+        const conhecido = campo && rotulo(campo) !== campo;
         return response.status(HttpStatus.BAD_REQUEST).json({
           statusCode: HttpStatus.BAD_REQUEST,
           error: 'Bad Request',
-          message: campo
-            ? `Referência inválida em: ${campo}`
-            : 'Referência inválida: o registro relacionado não existe',
+          message: conhecido
+            ? `O registro escolhido em "${rotulo(campo)}" não existe`
+            : 'Um dos registros relacionados não existe',
         });
       }
 

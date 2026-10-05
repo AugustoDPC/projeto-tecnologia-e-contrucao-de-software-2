@@ -69,6 +69,8 @@ export const recursos: Recurso[] = [
       { nome: 'nomeCompleto', rotulo: 'Nome completo', tipo: 'text', obrigatorio: true },
       { nome: 'email', rotulo: 'E-mail', tipo: 'email', obrigatorio: true },
       { nome: 'senha', rotulo: 'Senha', tipo: 'password', obrigatorio: true, ocultarNaLista: true },
+      // USER = aluno, INSTRUTOR = professor. Só o admin cria professores e outros admins.
+      { nome: 'perfil', rotulo: 'Perfil', tipo: 'select', opcoes: ['USER', 'INSTRUTOR', 'ADMIN'] },
     ],
   },
   {
@@ -284,8 +286,26 @@ export const recursos: Recurso[] = [
 
 export const grupos = [...new Set(recursos.map((r) => r.grupo))];
 
-export function acharRecurso(slug: string | undefined) {
-  return recursos.find((r) => r.slug === slug);
+// Telas do professor: catálogo, conteúdo e acompanhamento dos alunos (sem usuários e financeiro).
+// No curso não aparece o "Instrutor": o backend coloca o próprio professor.
+const SLUGS_PROFESSOR = [
+  'cursos',
+  'categorias',
+  'trilhas',
+  'modulos',
+  'aulas',
+  'matriculas',
+  'progresso-aulas',
+  'avaliacoes',
+  'certificados',
+];
+
+export const recursosProfessor: Recurso[] = recursos
+  .filter((r) => SLUGS_PROFESSOR.includes(r.slug))
+  .map((r) => (r.slug === 'cursos' ? { ...r, campos: r.campos.filter((c) => c.nome !== 'idInstrutor') } : r));
+
+export function acharRecurso(slug: string | undefined, lista: Recurso[] = recursos) {
+  return lista.find((r) => r.slug === slug);
 }
 
 // Caminho do registro no backend: /cursos/3 ou /trilhas-cursos/1/2.

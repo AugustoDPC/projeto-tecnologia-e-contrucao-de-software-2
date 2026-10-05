@@ -12,9 +12,11 @@ export class CreateCursoDto {
   @IsString()
   descricao?: string;
 
-  @ApiProperty({ example: 1, description: 'ID do usuário instrutor' })
+  // O professor não escolhe: o curso fica sempre no nome dele. Só o admin informa.
+  @ApiPropertyOptional({ example: 1, description: 'ID do instrutor (só o admin informa)' })
+  @IsOptional()
   @IsInt()
-  idInstrutor: number;
+  idInstrutor?: number;
 
   @ApiProperty({ example: 1, description: 'ID da categoria' })
   @IsInt()

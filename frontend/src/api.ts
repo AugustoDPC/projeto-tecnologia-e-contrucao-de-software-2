@@ -46,6 +46,7 @@ export async function api<T = unknown>(path: string, method: Metodo = 'GET', bod
 
   const texto = await res.text();
   const dados = texto ? JSON.parse(texto) : null;
+  console.log(`[api] ${method} ${path} → ${res.status}`, { enviado: body, recebido: dados });
 
   if (!res.ok) {
     // O ValidationPipe do Nest devolve um array de mensagens.

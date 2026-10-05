@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
+import { erroDeValidacaoEmPortugues } from './comum/validacao-em-portugues';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
+      // Mensagens do class-validator em português.
+      exceptionFactory: erroDeValidacaoEmPortugues,
     }),
   );
   app.useGlobalFilters(new PrismaExceptionFilter());
