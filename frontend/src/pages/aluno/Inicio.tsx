@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../auth';
 import {
   assinaturaAtiva,
   BarraProgresso,
@@ -17,7 +18,8 @@ import {
 
 // Painel do aluno: resumo e "continue de onde parou".
 export default function Inicio() {
-  const eu = useApi<Usuario>('/usuarios/me').dados;
+  const { idUsuario } = useAuth();
+  const eu = useApi<Usuario>(`/usuarios/${idUsuario}`).dados;
   const matriculas = useApi<Matricula[]>('/matriculas').dados ?? [];
   const cursos = useApi<Curso[]>('/cursos').dados ?? [];
   const aulas = useApi<Aula[]>('/aulas').dados ?? [];

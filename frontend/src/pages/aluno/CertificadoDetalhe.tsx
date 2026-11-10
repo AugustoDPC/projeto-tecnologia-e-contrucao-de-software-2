@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { useAuth } from '../../auth';
 import { dataBR, useApi, type Certificado, type Curso, type Usuario } from '../plataforma/util';
 
 // O certificado "de verdade", pronto para imprimir (ou salvar como PDF pelo navegador).
@@ -6,7 +7,8 @@ export default function CertificadoDetalhe() {
   const id = useParams().id;
   const { dados: certificado, erro } = useApi<Certificado>(`/certificados/${id}`);
   const curso = useApi<Curso>(certificado ? `/cursos/${certificado.idCurso}` : null).dados;
-  const eu = useApi<Usuario>('/usuarios/me').dados;
+  const { idUsuario } = useAuth();
+  const eu = useApi<Usuario>(`/usuarios/${idUsuario}`).dados;
 
   if (!certificado) return erro ? <p className="erro">{erro}</p> : <p>Carregando…</p>;
 

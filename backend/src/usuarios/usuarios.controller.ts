@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ForbiddenException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Perfil } from '../generated/prisma/enums';
 import { Perfis } from '../auth/perfis.decorator';
 import { ehAdmin, ehEquipe, Logado, type UsuarioLogado } from '../auth/usuario-logado';
@@ -30,20 +30,6 @@ export class UsuariosController {
   @ApiQuery({ name: 'perfil', required: false, enum: Perfil })
   findAll(@Query('perfil') perfil?: string) {
     return this.usuariosService.findAll(perfil);
-  }
-
-  // Atalhos para "eu mesmo" — ficam antes de ':id' para "me" não ser lido como id.
-  // Usados pelas telas de Perfil; escondidos do Swagger (lá se usa /usuarios/{id}).
-  @ApiExcludeEndpoint()
-  @Get('me')
-  findMe(@Logado() logado: UsuarioLogado) {
-    return this.usuariosService.findOne(logado.idUsuario);
-  }
-
-  @ApiExcludeEndpoint()
-  @Patch('me')
-  updateMe(@Body() updateUsuarioDto: UpdateUsuarioDto, @Logado() logado: UsuarioLogado) {
-    return this.update(String(logado.idUsuario), updateUsuarioDto, logado);
   }
 
   @Get(':id')

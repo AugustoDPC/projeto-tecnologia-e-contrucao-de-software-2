@@ -17,7 +17,7 @@ import {
 // Painel do professor: os cursos DELE e como estão as turmas.
 export default function Inicio() {
   const { idUsuario } = useAuth();
-  const eu = useApi<Usuario>('/usuarios/me').dados;
+  const eu = useApi<Usuario>(`/usuarios/${idUsuario}`).dados;
   const cursos = useApi<Curso[]>('/cursos').dados ?? [];
   const modulos = useApi<Modulo[]>('/modulos').dados ?? [];
   const aulas = useApi<Aula[]>('/aulas').dados ?? [];

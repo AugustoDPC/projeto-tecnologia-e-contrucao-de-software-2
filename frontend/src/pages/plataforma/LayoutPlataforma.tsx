@@ -68,8 +68,8 @@ function fecharMenu(e: MouseEvent<HTMLElement>) {
 
 // Layout da área do aluno e da área do professor: barra no topo + conteúdo.
 export default function LayoutPlataforma({ perfil }: { perfil: 'USER' | 'INSTRUTOR' }) {
-  const { token, perfil: meuPerfil, logout } = useAuth();
-  const { dados: eu } = useApi<Usuario>(token ? '/usuarios/me' : null);
+  const { token, idUsuario, perfil: meuPerfil, logout } = useAuth();
+  const { dados: eu } = useApi<Usuario>(token ? `/usuarios/${idUsuario}` : null);
 
   if (!token) return <Navigate to="/login" replace />;
   // Cada um na sua área: quem abrir a área errada é levado para a dele.

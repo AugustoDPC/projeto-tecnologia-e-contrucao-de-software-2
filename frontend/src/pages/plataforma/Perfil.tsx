@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../../api';
+import { useAuth } from '../../auth';
 import { dataBR, useApi, type Usuario } from './util';
 
 // "Meu perfil": igual para aluno e professor.
 export default function Perfil() {
-  const { dados: eu, erro: erroCarregar } = useApi<Usuario>('/usuarios/me');
+  const { idUsuario } = useAuth();
+  const { dados: eu, erro: erroCarregar } = useApi<Usuario>(`/usuarios/${idUsuario}`);
   const [nomeCompleto, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -31,7 +33,7 @@ export default function Perfil() {
     setSalvando(true);
     try {
       // Senha em branco = mantém a atual.
-      await api('/usuarios/me', 'PATCH', { nomeCompleto, email, ...(senha ? { senha } : {}) });
+      await api(`/usuarios/${idUsuario}`, 'PATCH', { nomeCompleto, email, ...(senha ? { senha } : {}) });
       setSenha('');
       setConfirmacao('');
       setAviso('Perfil atualizado!');
