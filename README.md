@@ -50,6 +50,22 @@ excluir para cada tabela. As tabelas ficam descritas em
 `frontend/src/resources.ts` — ao criar uma tabela nova no backend, basta
 adicionar uma entrada nesse arquivo.
 
+## Mobile (React Native + Expo)
+
+```
+cd mobile
+npm install
+npx expo login
+npx expo start --tunnel
+```
+
+O `npx expo login` só é preciso na primeira vez (conta grátis em expo.dev); sem
+ele o `--tunnel` não funciona. Com o tunnel, o celular não precisa estar no mesmo
+Wi-Fi do PC, só ter internet.
+
+Abra o app **Expo Go** no celular e leia o QR Code que aparece no terminal.
+Por enquanto o app tem só a tela de login (layout, ainda sem chamar o backend).
+
 
 Swagger é esse:
 
