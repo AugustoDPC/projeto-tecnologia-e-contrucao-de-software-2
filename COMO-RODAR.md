@@ -291,5 +291,6 @@ Entre no **site** com esse admin e cadastre, nesta ordem: **Categorias** > **Cur
 | "Não foi possível conectar ao servidor" | Backend ligado? Porta 3000 está **Public**? O `EXPO_PUBLIC_API_URL` está certo (sem barra no final)? |
 | Expo Go pede login | Rode de novo a linha do `EXPO_TOKEN` (vale só para aquele terminal) |
 | Aviso de "install scripts" no `npm install` | Rode `npm rebuild` dentro da pasta `backend` |
+| `ENOSPC: System limit for number of file watchers reached` (Linux) | Rode `echo fs.inotify.max_user_watches=524288 \| sudo tee -a /etc/sysctl.conf` e depois `sudo sysctl -p` (uma vez só no PC) |
 | QR Code cortado | Aumente o painel do terminal ou diminua o zoom (Ctrl -) |
 | Não aperte Ctrl+C | Ctrl+C desliga o que está rodando naquele terminal |
