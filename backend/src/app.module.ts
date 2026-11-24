@@ -18,6 +18,7 @@ import { CertificadosModule } from './certificados/certificados.module';
 import { PlanosModule } from './planos/planos.module';
 import { AssinaturasModule } from './assinaturas/assinaturas.module';
 import { PagamentosModule } from './pagamentos/pagamentos.module';
+import { NotificacoesModule } from './notificacoes/notificacoes.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PerfisGuard } from './auth/perfis.guard';
 
@@ -39,6 +40,7 @@ import { PerfisGuard } from './auth/perfis.guard';
     PlanosModule,
     AssinaturasModule,
     PagamentosModule,
+    NotificacoesModule,
   ],
   controllers: [AppController],
   providers: [

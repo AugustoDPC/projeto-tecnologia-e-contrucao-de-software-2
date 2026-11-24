@@ -20,6 +20,15 @@ export class MatriculasService {
 
     const matricula = await this.prisma.matricula.create({ data: createMatriculaDto });
     console.log('[matriculas] nova matrícula:', matricula);
+
+    // Notificação de boas-vindas: aparece em "Avisos", no Perfil do app.
+    const curso = await this.prisma.curso.findUnique({ where: { idCurso: matricula.idCurso } });
+    await this.prisma.notificacao.create({
+      data: {
+        idUsuario: matricula.idUsuario,
+        mensagem: `Parabéns! Sua matrícula no curso ${curso?.titulo} foi confirmada. Boas-vindas!`,
+      },
+    });
     return matricula;
   }
 

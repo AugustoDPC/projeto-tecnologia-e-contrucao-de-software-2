@@ -36,6 +36,7 @@ model Usuario {
   avaliacoes       Avaliacao[]
   certificados     Certificado[]
   assinaturas      Assinatura[]
+  notificacoes     Notificacao[]
 
   @@map("Usuarios")
 }
@@ -238,4 +239,20 @@ model Pagamento {
   assinatura Assinatura @relation(fields: [idAssinatura], references: [idAssinatura])
 
   @@map("Pagamentos")
+}
+
+// ------------------------------------------------------------
+// Notificações (criadas na matrícula; aparecem no Perfil do app)
+// ------------------------------------------------------------
+
+model Notificacao {
+  idNotificacao Int      @id @default(autoincrement()) @map("ID_Notificacao")
+  idUsuario     Int      @map("ID_Usuario")
+  mensagem      String   @map("Mensagem")
+  lida          Boolean  @default(false) @map("Lida")
+  dataCriacao   DateTime @default(now()) @map("DataCriacao")
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+
+  @@map("Notificacoes")
 }

@@ -1,14 +1,15 @@
-// StatusBar do Expo controla a barra de status (hora, bateria) do celular
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import LoginScreen from './src/screens/LoginScreen';
+import { AuthProvider } from './src/AuthContext';
+import Rotas from './src/navigation/Rotas';
 
-// Por enquanto o app tem só a tela de login.
-// A navegação entre telas (React Navigation, Etapa 6) entra depois.
 export default function App() {
   return (
-    <>
-      <LoginScreen />
-      <StatusBar style="dark" />
-    </>
+    <AuthProvider>
+      <NavigationContainer>
+        <Rotas />
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
