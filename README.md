@@ -52,19 +52,11 @@ adicionar uma entrada nesse arquivo.
 
 ## Mobile (React Native + Expo)
 
-```
-cd mobile
-npm install
-npx expo login
-npx expo start --tunnel
-```
+Passo a passo completo (backend + app no celular) e o que testar: **[COMO-RODAR.md](COMO-RODAR.md)**.
 
-O `npx expo login` só é preciso na primeira vez (conta grátis em expo.dev); sem
-ele o `--tunnel` não funciona. Com o tunnel, o celular não precisa estar no mesmo
-Wi-Fi do PC, só ter internet.
-
-Abra o app **Expo Go** no celular e leia o QR Code que aparece no terminal.
-Por enquanto o app tem só a tela de login (layout, ainda sem chamar o backend).
+O app tem login e cadastro, cursos e trilhas, módulos e aulas (com cadeado até matricular),
+matrícula com plano e forma de pagamento, Meus Cursos e Perfil (com os avisos da matrícula).
+As cores são as mesmas do site (`frontend/src/styles.css`).
 
 
 Swagger é esse:

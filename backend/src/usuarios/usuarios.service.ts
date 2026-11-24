@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Perfil } from '../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
@@ -57,7 +57,43 @@ export class UsuariosService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.usuario.delete({ where: { idUsuario: id } });
+  // Excluir o usuário apaga junto TUDO que é dele, sem precisar desligar nada antes.
+  // Tudo numa transação: se algo falhar, nada é apagado.
+  async remove(id: number) {
+    const usuario = await this.findOne(id);
+    if (!usuario) throw new NotFoundException('Usuário não encontrado.');
+
+    // Cursos em que ele é o professor: somem junto, com todo o conteúdo
+    const cursos = await this.prisma.curso.findMany({ where: { idInstrutor: id }, select: { idCurso: true } });
+    const idsCursos = cursos.map((c) => c.idCurso);
+    const doCurso = { idCurso: { in: idsCursos } };
+    const aulasDosCursos = { aula: { modulo: doCurso } };
+
+    await this.prisma.$transaction([
+      // 1) O que é do usuário como aluno
+      this.prisma.notificacao.deleteMany({ where: { idUsuario: id } }),
+      this.prisma.progressoAula.deleteMany({ where: { idUsuario: id } }),
+      this.prisma.avaliacao.deleteMany({ where: { idUsuario: id } }),
+      this.prisma.certificado.deleteMany({ where: { idUsuario: id } }),
+      this.prisma.matricula.deleteMany({ where: { idUsuario: id } }),
+      this.prisma.pagamento.deleteMany({ where: { assinatura: { idUsuario: id } } }),
+      this.prisma.assinatura.deleteMany({ where: { idUsuario: id } }),
+
+      // 2) Os cursos que ele ministra (e o que os alunos tinham nesses cursos)
+      this.prisma.progressoAula.deleteMany({ where: aulasDosCursos }),
+      this.prisma.aula.deleteMany({ where: { modulo: doCurso } }),
+      this.prisma.modulo.deleteMany({ where: doCurso }),
+      this.prisma.matricula.deleteMany({ where: doCurso }),
+      this.prisma.avaliacao.deleteMany({ where: doCurso }),
+      this.prisma.certificado.deleteMany({ where: doCurso }),
+      this.prisma.trilhaCurso.deleteMany({ where: doCurso }),
+      this.prisma.curso.deleteMany({ where: doCurso }),
+
+      // 3) Por último, o próprio usuário
+      this.prisma.usuario.delete({ where: { idUsuario: id } }),
+    ]);
+
+    console.log(`[usuarios] usuário ${id} excluído junto com ${idsCursos.length} curso(s) que ministrava`);
+    return usuario;
   }
 }

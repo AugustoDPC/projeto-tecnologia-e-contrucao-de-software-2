@@ -1,143 +1,76 @@
 import { useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
-  KeyboardAvoidingView, Platform,
-} from 'react-native';
-import { cores } from '../styles/theme';
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useAuth } from '../AuthContext';
+import Botao from '../components/Botao';
+import { cores, comum } from '../styles/tema';
 
-// Tela de login da PlataformaCursos (base: Etapa 5.2 do tutorial).
-export default function LoginScreen() {
-  // Estados dos campos do formulário
+// Mesmo desenho da tela de login do site: um cartão branco no meio da tela
+export default function LoginScreen({ navigation }) {
+  const { entrar } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  // Mensagem de erro da validação ('' = sem erro)
   const [erro, setErro] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
-  // Confere os campos antes de enviar; devolve a mensagem de erro ou '' se estiver tudo certo
-  function validar() {
-    if (!email.trim()) return 'Informe o e-mail.';
-    // algo@algo.algo — sem espaços
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return 'E-mail inválido. Ex.: nome@gmail.com';
-    if (!senha) return 'Informe a senha.';
-    return '';
-  }
+  async function handleEntrar() {
+    // Validação antes de chamar a API
+    if (!email.trim() || !senha) return setErro('Preencha o e-mail e a senha.');
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setErro('Digite um e-mail válido.');
 
-  function handleLogin() {
-    const mensagem = validar();
-    setErro(mensagem);
-    if (mensagem) return;
-
-    // Por enquanto só o layout.
-    // Aqui entrará a chamada à API NestJS (POST /auth/login com { email, password })
-    alert(`Login de ${email.trim()}`);
+    setErro('');
+    setEnviando(true);
+    try {
+      await entrar(email.trim(), senha); // logou: o app troca sozinho para as abas
+    } catch (e) {
+      setErro(e.message);
+      setEnviando(false);
+    }
   }
 
   return (
-    // KeyboardAvoidingView: empurra o conteúdo para cima quando o teclado abre (iOS)
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      {/* BLOCO 1: cabeçalho */}
-      <View style={styles.cabecalho}>
-        {/* Logo feita com View: um círculo (borderRadius = metade do tamanho) */}
-        <View style={styles.logo}>
-          <Text style={styles.logoTexto}>PC</Text>
+    <KeyboardAvoidingView style={styles.tela} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <Text style={styles.marca}>Cursos Online</Text>
+
+      <View style={[comum.card, styles.cartao]}>
+        <Text style={styles.titulo}>Entrar</Text>
+
+        <View>
+          <Text style={comum.rotulo}>E-mail</Text>
+          <TextInput
+            style={comum.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
-        <Text style={styles.titulo}>PlataformaCursos</Text>
-        <Text style={styles.subtitulo}>Faça login para continuar</Text>
-      </View>
 
-      {/* BLOCO 2: formulário */}
-      <View style={styles.formulario}>
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          keyboardType="email-address" // teclado com @
-          autoCapitalize="none"         // não coloca maiúscula automática
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          secureTextEntry               // esconde os caracteres
-          value={senha}
-          onChangeText={setSenha}
-        />
+        <View>
+          <Text style={comum.rotulo}>Senha</Text>
+          <TextInput style={comum.input} secureTextEntry value={senha} onChangeText={setSenha} />
+        </View>
 
-        {/* Só aparece quando a validação encontra um problema */}
-        {erro ? <Text style={styles.erro}>{erro}</Text> : null}
+        {erro ? <Text style={comum.erro}>{erro}</Text> : null}
 
-        {/* alignSelf: só este item vai para a direita */}
-        <Text style={styles.esqueci}>Esqueci a senha</Text>
+        <Botao texto="Entrar" onPress={handleEntrar} carregando={enviando} />
 
-        <TouchableOpacity style={styles.botao} onPress={handleLogin}>
-          <Text style={styles.botaoTexto}>ENTRAR</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* BLOCO 3: rodapé em linha (o cadastro vem numa próxima etapa) */}
-      <View style={styles.rodape}>
-        <Text style={styles.rodapeTexto}>Não tem conta? </Text>
-        <Text style={styles.link}>Cadastre-se</Text>
+        <Text style={styles.rodape}>
+          Não tem conta?{' '}
+          <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')}>
+            Cadastre-se
+          </Text>
+        </Text>
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,                    // ocupa a tela inteira
-    justifyContent: 'center',   // blocos no centro vertical
-    padding: 24,
-    gap: 32,                    // espaço entre os três blocos
-    backgroundColor: cores.fundo,
-  },
-  cabecalho: {
-    alignItems: 'center',       // centraliza logo e textos na horizontal
-    gap: 8,
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: cores.primaria,
-    justifyContent: 'center',   // centraliza a sigla nos dois eixos
-    alignItems: 'center',
-  },
-  logoTexto: { color: cores.branco, fontSize: 30, fontWeight: 'bold' },
-  titulo: { fontSize: 26, fontWeight: 'bold', color: cores.texto },
-  subtitulo: { color: cores.cinza },
-  formulario: {
-    gap: 12,                    // sem alignItems: os inputs esticam (stretch)
-  },
-  input: {
-    height: 50,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: cores.borda,
-    backgroundColor: cores.branco,
-    color: cores.texto,
-  },
-  erro: { color: cores.perigo },
-  esqueci: {
-    alignSelf: 'flex-end',      // sobrescreve o stretch: vai para a direita
-    color: cores.primaria,
-  },
-  botao: {
-    height: 50,
-    borderRadius: 10,
-    backgroundColor: cores.primaria,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  botaoTexto: { color: cores.branco, fontWeight: 'bold', fontSize: 16 },
-  rodape: {
-    flexDirection: 'row',       // textos lado a lado
-    justifyContent: 'center',   // centralizados na horizontal
-  },
-  rodapeTexto: { color: cores.texto },
-  link: { color: cores.primaria, fontWeight: 'bold' },
+  tela: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: cores.escura },
+  marca: { color: '#fff', fontSize: 24, fontWeight: '700', textAlign: 'center', marginBottom: 20 },
+  cartao: { gap: 14, padding: 22 },
+  titulo: { fontSize: 24, fontWeight: '700', color: cores.texto },
+  rodape: { textAlign: 'center', color: cores.suave },
+  link: { color: cores.primaria, fontWeight: '600' },
 });
